@@ -1,0 +1,8 @@
+version: '3'
+services:
+  # ubuntu コンテナ
+  ubuntu:
+    container_name: "ubuntu20.04"
+    # 同じディレクトリ内のDockerfileからビルド
+    build: ./
+    tty: true
