@@ -3,6 +3,5 @@ services:
   # ubuntu コンテナ
   ubuntu:
     container_name: "ubuntu20.04"
-    # 同じディレクトリ内のDockerfileからビルド
-    build: ./
-    tty: true
+    build: ./ # 同じディレクトリ内のDockerfileからビルド
+    tty: true # コンテナが正常終了するのを防ぐため
