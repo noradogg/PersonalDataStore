@@ -2,7 +2,7 @@
 
 ## command
 
-'''bash:terminal
+```bash:terminal
 $ docker-compose build
 $ docker-compose up -d
 $ docker-compose exec ubuntu bash
