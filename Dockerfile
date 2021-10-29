@@ -14,5 +14,14 @@ RUN apt update
 RUN apt install -y mongodb-org
 # Geographic area: 6, Time zone: 79, Current default time zone: 'Asia/Tokyo'
 
+## 必要そうなコマンドのインストール ##
+# 現状dockerでsystemctlは使えない状態
+# 原因はPID1が /sbin/init でないから
+#RUN apt install -y systemctl
+# systemctlを使うなら、journalctlも使いたい
+# でも、なぜかコンテナ内でinstallできない
+# apt-cache search journalctl で探してみてもでてこない
+#RUN apt install -y journalctl
+
 ## MongoDBのストレージとなるディレクトリを作成 ##
 WORKDIR /data/db
