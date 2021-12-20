@@ -13,6 +13,4 @@ docker-composeでMongoDBのコンテナを立ち上げることに成功
 
 ## MongoDB Compass
 
-```:connection string
-mongodb://root:password@localhost:27017
-```
+connection stringは```mongodb://root:password@localhost:27017```
