@@ -1,10 +1,10 @@
-version: '3'
+version: '3.8'
 
 services:
 
   mongodb:
     container_name: "mongodb"
-    hostname: mongodb
+    hostname: "mongodb"
     image: mongo:5.0.5
     restart: always
     ports:
@@ -15,3 +15,26 @@ services:
     environment:
       MONGO_INITDB_ROOT_USERNAME: root
       MONGO_INITDB_ROOT_PASSWORD: password
+
+  node:
+    container_name: "node"
+    hostname: "node"
+    image: node:17.3.0
+    tty: true
+    restart: always
+    volumes:
+      - ./node_src:/src
+    working_dir: "/src"
+
+
+  # pymongo:
+  #   container_name: "pymongo"
+  #   hostname: pymongo
+  #   build:
+  #     context: .
+  #     dockerfile: './pymongo.Dockerfile'
+  #   tty: true
+  #   # ports:
+  #   #   - port:port
+  #   volumes:
+  #     - ./pymongo_src:/src

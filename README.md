@@ -2,15 +2,17 @@
 
 ## Comment
 
-docker-composeでMongoDBのコンテナを立ち上げることに成功
+mongodb: MongoDB server
+node: MongoDB client
+pymongo: Not used
 
 ## Usage
 
 ```bash:コンテナの立ち上げ
 % docker-compose up -d
-% docker-compose exec mongodb bash
+% docker-compose exec node bash
 ```
 
 ## MongoDB Compass
 
-connection stringは```mongodb://root:password@localhost:27017```
+connection string: `mongodb://root:password@localhost:27017`
