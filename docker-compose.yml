@@ -22,6 +22,8 @@ services:
     image: node:17.3.0
     tty: true
     restart: always
+    ports:
+      - 3000:3000
     volumes:
       - ./node_src:/src
     working_dir: "/src"
