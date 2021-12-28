@@ -1,13 +1,16 @@
 const express = require('express');
 const User = require('../models/User');
 const bcrypt = require('bcrypt');
+const passport = require('passport');
 const router = express.Router();
 
-/* GET users listing. */
+
+/* GET users/register */
 router.get('/register', function(req, res, next) {
   res.render('register');
 });
 
+/* POST users/register */
 router.post('/register', (req, res) => {
   /* 新規登録 */
   const { name, email, password } = req.body;
@@ -67,6 +70,21 @@ router.post('/register', (req, res) => {
         }
     })
   }
+})
+
+/* GET users/login */
+router.get('/login', (req, res, next) => {
+  res.render('login');
+  next();
+})
+
+/* POST users/login */
+router.post('/login', (req, res, next) => {
+  passport.authenticate('local', {
+    successRedirect: '/dashboard',
+    failureRedirect: '/users/login',
+    failureFlash: true
+  })(req, res, next)
 })
 
 module.exports = router;

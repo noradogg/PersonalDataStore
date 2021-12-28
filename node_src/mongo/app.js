@@ -5,6 +5,10 @@ const cookieParser = require('cookie-parser');
 const logger = require('morgan');
 const mongoose = require('mongoose');
 const db = require('./config/db');
+const flash = require('connect-flash');
+const session = require('express-session');
+const passport = require('passport');
+require('./config/passport')(passport)
 
 mongoose
   .connect(db.url, { 
@@ -32,6 +36,25 @@ app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
 app.use(cookieParser());
 app.use(express.static(path.join(__dirname, 'public')));
+
+// express-session
+app.use(session({
+  secret: 'mysecret',
+  resave: false,
+  saveUninitialized: false,
+  // cookie: {secure: true} // 本番環境では必須らしい
+}))
+
+// passport
+app.use(passport.initialize());
+app.use(passport.session());
+
+// flash
+app.use(flash());
+app.use((req, res, next) => {
+  res.locals.error = req.flash('error');
+  next();
+})
 
 app.use('/', indexRouter);
 app.use('/users', usersRouter);
