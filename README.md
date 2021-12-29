@@ -1,16 +1,18 @@
-# PersonalDataStore
-
 ## Comment
 
 mongodb: MongoDB server
-node: MongoDB client
-pymongo: Not used
+node: Web server
 
 ## Usage
 
-```bash:コンテナの立ち上げ
+```:コンテナの立ち上げ
 % docker-compose up -d
 % docker-compose exec node bash
+```
+
+```:サーバの実行
+# cd mongo/
+# node ./bin/www
 ```
 
 ## MongoDB Compass

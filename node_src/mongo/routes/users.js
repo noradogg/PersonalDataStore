@@ -61,7 +61,7 @@ router.post('/register', (req, res) => {
                 .save()
                 .then(user => {
                   // res.redirect('users/login');
-                  res.send('新規登録完了しました');
+                  res.render('registered');
                 })
                 .catch(err => console.log(err));
             })
@@ -81,10 +81,16 @@ router.get('/login', (req, res, next) => {
 /* POST users/login */
 router.post('/login', (req, res, next) => {
   passport.authenticate('local', {
-    successRedirect: '/dashboard',
+    successRedirect: '/mypage',
     failureRedirect: '/users/login',
     failureFlash: true
   })(req, res, next)
 })
+
+/* POST users/logout */
+router.post('/logout', (req, res) => {
+  req.session.passport.user = undefined;
+  res.redirect('/users/login');
+});
 
 module.exports = router;

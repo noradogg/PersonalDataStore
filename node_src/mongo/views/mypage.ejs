@@ -1,0 +1,15 @@
+<!DOCTYPE html>
+<body>
+  <% if (user) { %>
+    <h2>こんにちわ {{user.name}}さん</h2>
+    <form action="/users/logout" method="post">
+      <input type="submit" value="LOGOUT">
+    </form>
+    <hr>
+  <% } else { %>
+    <div>
+      <p>ログインは<a href="/users/login">こちら</a>から</p>
+    </div>
+  <% } %>
+</body>
+</html>

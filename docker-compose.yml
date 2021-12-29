@@ -27,16 +27,3 @@ services:
     volumes:
       - ./node_src:/src
     working_dir: "/src"
-
-
-  # pymongo:
-  #   container_name: "pymongo"
-  #   hostname: pymongo
-  #   build:
-  #     context: .
-  #     dockerfile: './pymongo.Dockerfile'
-  #   tty: true
-  #   # ports:
-  #   #   - port:port
-  #   volumes:
-  #     - ./pymongo_src:/src
