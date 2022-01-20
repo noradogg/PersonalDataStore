@@ -34,7 +34,7 @@ expressのページ
 [http://localhost:3000/mypage](http://localhost:3000/mypage)
 
 ネットワークログ一覧
-[http://localhost:3000/mypage/list](http://localhost:3000/mypage/list)
+[http://localhost:3000/mypage/ocunet_log](http://localhost:3000/mypage/ocunet_log)
 
 
 ## MongoDB Compass

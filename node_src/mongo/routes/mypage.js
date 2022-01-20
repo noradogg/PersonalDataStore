@@ -7,23 +7,7 @@ const client = new Client({
   node: 'http://10.11.2.8:9201',
 });
 
-const test_query = {
-  index: '.ds-logs-generic-default-2022.01.09-000001',
-  // type: '_doc', // uncomment this line if you are using {es} ≤ 6
-  body: {
-    query: {
-      match: { message: '2021-12-31' }
-    },
-    size: 3
-  }
-}
-
-async function search (email) {
-  const { body } = await client.search(test_query);
-  console.log(body.hits.hits);
-  return body.hits.hits;
-}
-
+/* GET /mypage */
 router.get('/', (req, res) => {
   res.render('mypage', {
     title: 'マイページ',
@@ -31,7 +15,33 @@ router.get('/', (req, res) => {
   });
 });
 
-router.get('/list', (req, res) => {
+/** 学籍番号で検索し、最新のログ10個を取ってくる */
+var create_query = (student_number) => {
+  return {
+    "index": '.ds-logs-generic-default-2022.01.09-000001',
+    // type: '_doc', // uncomment this line if you are using {es} ≤ 6
+    "body": {
+      "query": {
+        "match": { "message": student_number }
+      },
+      "size": 10,
+      "sort": [{ 
+        "@timestamp": { "order": "desc" } 
+      }]
+    }
+  }
+}
+
+/** メールアドレスから学籍番号を取得する */
+async function search (email) {
+  var student_number = email.split('@')[0];
+  const { body } = await client.search(create_query(student_number));
+  // console.log(body.hits.hits);
+  return body.hits.hits;
+}
+
+/* GET /mypage/ocunet_log */
+router.get('/ocunet_log', (req, res) => {
   if (req.user) {
     search(req.user.email)
       .catch(console.log)
@@ -41,9 +51,8 @@ router.get('/list', (req, res) => {
         } else {
           hits = ['該当するものはありません'];
         }
-        console.log(hits);
         res.render('list', {
-          title: 'リスト',
+          title: 'ネットワークログ',
           user: req.user,
           hits: hits,
         });

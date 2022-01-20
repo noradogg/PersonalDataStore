@@ -5,6 +5,15 @@ const passport = require('passport');
 const router = express.Router();
 
 
+/* GET users */
+router.get('/', function(req, res, next) {
+  if (req.user) {
+    res.redirect('/mypage');
+  } else {
+    res.redirect('/users/login');
+  }
+});
+
 /* GET users/register */
 router.get('/register', function(req, res, next) {
   res.render('register', { title: 'アカウント登録' });
