@@ -1,4 +1,4 @@
-version: '3.8'
+version: "3.8"
 
 services:
 
@@ -10,8 +10,8 @@ services:
     ports:
       - 27017:27017
     volumes:
-      - ./.db:/data/db
-      - ./.configdb:/data/configdb
+      - ./mongodb_db:/data/db
+      - ./mongodb_configdb:/data/configdb
     environment:
       MONGO_INITDB_ROOT_USERNAME: root
       MONGO_INITDB_ROOT_PASSWORD: password
@@ -19,11 +19,26 @@ services:
   node:
     container_name: "node"
     hostname: "node"
-    image: node:17.3.0
+    image: node:17.3
     tty: true
     restart: always
+    stop_grace_period: 5s
     ports:
       - 3000:3000
     volumes:
       - ./node_src:/src
+    working_dir: "/src/mongo"
+
+  insertdata:
+    container_name: "insertdata"
+    hostname: "insertdata"
+    # image: python:3.10.2
+    build: "./insertdata_Dockerfile"
+    tty: true
+    restart: always
+    stop_grace_period: 5s
+    # ports:
+    #   - 3000:3000
+    volumes:
+      - ./insertdata_src:/src
     working_dir: "/src"
