@@ -6,7 +6,7 @@ insertdata: Connector
 
 # Usage
 
-## At First
+## docker-compose up
 
 ```:コンテナの立ち上げ
 % docker-compose up -d
@@ -35,6 +35,10 @@ insertdata: Connector
 # python get.py
 ```
 
+```:mongodbにjsonファイルから得たデータを格納
+# python -O get.py
+```
+
 # URI
 
 expressのページ
@@ -55,6 +59,9 @@ expressのページ
 ネットワークログ一覧(VPNで学内ネットワークに接続する.)
 [http://localhost:3000/mypage/ocunet_log](http://localhost:3000/mypage/ocunet_log)
 
+testページ
+[http://localhost:3000/mypage/test](http://localhost:3000/mypage/test)
+
 
 # MongoDB Compass
 
@@ -68,6 +75,9 @@ PDS: Personal Data Store
 
 # Memo
 
-insertdata
+### insertdata
 - データソースがJSONファイルなので、実際に流れてくるデータを取得したい
 - テスト環境なので、もう少しこる
+
+### node
+- PDSからデータを取ることはできている（コンソールで確認）ので、フロントエンドで表示したい

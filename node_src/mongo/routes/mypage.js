@@ -6,6 +6,9 @@ const { ElasticsearchClientError } = require('@elastic/elasticsearch/lib/errors'
 const client = new Client({ 
   node: 'http://10.11.2.8:9201',
 });
+const mongodb_db = require('../config/mongodb_db')
+const MongoClient = require('mongodb').MongoClient;
+
 
 /* GET /mypage */
 router.get('/', (req, res) => {
@@ -15,7 +18,7 @@ router.get('/', (req, res) => {
   });
 });
 
-/** 学籍番号で検索し、最新のログ10個を取ってくる */
+/** 学籍番号で検索し、最新のログ10個を取ってくるクエリ */
 var create_query = (student_number) => {
   return {
     "index": '.ds-logs-generic-default-2022.01.09-000001',
@@ -29,10 +32,10 @@ var create_query = (student_number) => {
         "@timestamp": { "order": "desc" } 
       }]
     }
-  }
+  };
 }
 
-/** メールアドレスから学籍番号を取得する */
+/** メールアドレスから学籍番号を取得してそれをもとに検索 */
 async function search (email) {
   var student_number = email.split('@')[0];
   const { body } = await client.search(create_query(student_number));
@@ -62,5 +65,59 @@ router.get('/ocunet_log', (req, res) => {
     res.redirect('/users/login');
   }
 })
+
+
+/* GET /mypage/test */
+router.get('/test', (req, res) => {
+  var result = null
+
+  // ../config/mongodb_dbからurl, options, db_name, collection_nameをインポートしてるので、それを使う
+  MongoClient.connect(mongodb_db.url, mongodb_db.options, (err, client) => {
+    if( err != null || client == null ){
+      console.log(" !! failed to connect mongo db server !! ");
+      console.log(err);
+    }else{
+      console.log(" @@ Connected successfully to server @@ ");
+      const db = client.db(mongodb_db.db_name);
+      const collection = db.collection(mongodb_db.collection_name);
+
+      collection.find({"dp": "webclass_log"}).toArray((err, result) => {
+        console.log(result); // 確認用でコンソールに表示
+        console.log("timestamp: ", result[0].timestamp); // 確認用でコンソールに表示
+        res.send("test")
+      })
+    }
+  });
+})
+
+
+function test_get() {
+  return new Promise(function (resolve, reject) {
+    MongoClient.connect(mongodb_db.url, mongodb_db.options, (err, client) => {
+      if( err != null || client == null ){
+        console.log(" !! failed to connect mongo db server !! ");
+        console.log(err);
+      }else{
+        console.log(" @@ Connected successfully to server @@ ");
+        const db = client.db(mongodb_db.db_name);
+        const collection = db.collection(mongodb_db.collection_name);
+
+        collection.find({"dp": "webclass_log"}).toArray((err, result) => {
+          // console.log(result); // 確認用でコンソールに表示
+          resolve(result);
+        })
+      }
+    }) 
+  })
+}
+
+// router.get('/test', (req, res) => {
+//   test_get()
+//     .then((result) => {
+//       console.log("timestamp: ", result[0].timestamp); // 確認用でコンソールに表示
+//       res.send("test")
+//     })
+// })
+
 
 module.exports = router;

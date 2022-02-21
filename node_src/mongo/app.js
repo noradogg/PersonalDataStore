@@ -8,18 +8,18 @@ const session = require('express-session');
 const passport = require('passport');
 require('./config/passport')(passport);
 const mongoose = require('mongoose');
-const db = require('./config/db');
+const mongoose_db = require('./config/mongoose_db');
 
 mongoose
-  .connect(db.url, { 
+  .connect(mongoose_db.url, { 
     useNewUrlParser: true, 
     useUnifiedTopology: true, 
-    user: db.user,
-    pass: db.pass, 
-    dbName: db.dbName,
+    user: mongoose_db.user,
+    pass: mongoose_db.pass, 
+    dbName: mongoose_db.dbName,
   })
-  .then(()=> console.log('successfully connected to the database!'))
-  .catch(err=> console.log(err));
+  .catch(err=> console.log(err))
+  .then(()=> console.log('successfully connected to the database!'));
 
 const indexRouter = require('./routes/index');
 const usersRouter = require('./routes/users');
