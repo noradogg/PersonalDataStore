@@ -9,7 +9,7 @@ mongodb_db = {
       }
     },
     db_name: "personal_data",
-    collection_name: "personal_data"
+    collection_name: "personal_data_2"
   };
 
 module.exports = mongodb_db;

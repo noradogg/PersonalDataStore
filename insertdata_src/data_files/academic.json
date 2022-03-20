@@ -1,0 +1,16 @@
+{
+	"log1": {
+		"data_id": 123,
+		"date": "2022/02/08 12:00:00",
+		"source": "WebClass",
+		"message": "講義情報を参照しました",
+		"detail": {
+			"科目名": "数理計画",
+			"教材名": "第15回資料",
+			"MACアドレス": "50:ed:3c:41:e0:50"
+		},
+		"data_category": "教育支援システム(WebClass)",
+		"referring_service": "出席管理システム",
+		"pds_user_id": "a18tn036"
+	}
+}

@@ -23,7 +23,9 @@ insertdata: Connector
 # node ./bin/www
 ```
 
-`npm install`は初回だけ.
+`npm install`は初回だけ。
+
+[新規登録ページ](http://localhost:3000/users/register)にアクセスして登録し（初回のみ）、[ログインページ](http://localhost:3000/users/login)からログインする。
 
 ## Insert Data
 
@@ -77,7 +79,10 @@ PDS: Personal Data Store
 
 ### insertdata
 - データソースがJSONファイルなので、実際に流れてくるデータを取得したい
-- テスト環境なので、もう少しこる
+
+- マージしている最中
+- 手打ちでtest_insertをデータベースにいれるのを自動化する
+- データベースに入れたtest_insertからinsert_to_pds.pyでPDSに格納したい
 
 ### node
 - PDSからデータを取ることはできている（コンソールで確認）ので、フロントエンドで表示したい

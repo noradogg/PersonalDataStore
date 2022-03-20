@@ -1,0 +1,16 @@
+{
+    "log1": {
+        "data_id": 123,
+        "date": "2022/02/08 10:00:00",
+        "source": "QR管理システム",
+        "message": "座席登録されました",
+        "detail": {
+            "部屋名": "情報通信領域",
+            "座席名": "F601",
+            "MACアドレス": "50:ed:3c:41:e0:50"
+        },
+        "data_category": "QR着席管理システム",
+        "referring_service": "電子錠システム",
+        "pds_user_id": "a18tn036"
+    }
+}

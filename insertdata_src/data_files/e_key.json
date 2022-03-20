@@ -1,0 +1,15 @@
+{
+    "log1": {
+		"data_id": 123,
+		"date": "2022/02/08 11:00:00",
+		"source": "電子錠管理システム",
+		"message": "ドアを開錠しました",
+		"detail": {
+			"部屋名": "F604",
+			"電子錠": "電子錠A"
+		},
+		"data_category": "電子錠システム",
+		"referring_service": "",
+		"pds_user_id": "a18tn036"
+	}
+}

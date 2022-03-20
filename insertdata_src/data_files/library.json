@@ -1,0 +1,16 @@
+{
+	"log1": {
+		"data_id": 123,
+		"date": "2022/02/08 14:00:00",
+		"source": "図書貸出システム",
+		"message": "貸出手続きを行いました",
+		"detail": {
+			"管理番号": "xxxxxx",
+			"タイトル": "xxxx",
+			"担当者": "xx xx"
+		},
+		"data_category": "図書貸出システム",
+		"referring_service": "教育支援システム",
+		"pds_user_id": "a18tn036"
+	}
+}

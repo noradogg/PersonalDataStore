@@ -1,0 +1,17 @@
+{
+    "log1": {
+        "data_id": 123,
+        "date": "2022/02/08 09:00:00",
+        "source": "WiFi管理システム",
+        "message": "端末がキャンパスネットワークに接続されました",
+        "detail": {
+            "場所": "工学部大講義室",
+            "IPアドレス": "10.xx.xx.xx",
+            "MACアドレス": "50:ed:3c:41:e0:50",
+            "WiFiアクセスポイント": "WiFiアクセスポイントA"
+        },
+        "data_category": "WiFiシステム",
+        "referring_service": "登校管理システム",
+        "pds_user_id": "a18tn036"
+    }
+}

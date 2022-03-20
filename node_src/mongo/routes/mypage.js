@@ -66,58 +66,106 @@ router.get('/ocunet_log', (req, res) => {
   }
 })
 
+/* GET /mypage/data */
+router.get('/data', async (req,res)=>{
 
-/* GET /mypage/test */
-router.get('/test', (req, res) => {
-  var result = null
+  async function connect_mongo() {
+    let processed_data;
+    let client;
+    console.log("---- test connect mongodb server ---");
 
-  // ../config/mongodb_dbからurl, options, db_name, collection_nameをインポートしてるので、それを使う
-  MongoClient.connect(mongodb_db.url, mongodb_db.options, (err, client) => {
-    if( err != null || client == null ){
-      console.log(" !! failed to connect mongo db server !! ");
-      console.log(err);
-    }else{
-      console.log(" @@ Connected successfully to server @@ ");
+    try {
+      // ../config/mongodb_dbからurl, options, db_name, collection_nameをインポートしてるので、それを使う
+      client = await MongoClient.connect(mongodb_db.url, mongodb_db.options);
+      console.log(" @@ Connected successfully to server @@ ")
       const db = client.db(mongodb_db.db_name);
-      const collection = db.collection(mongodb_db.collection_name);
+      var collection = db.collection(mongodb_db.collection_name);
 
-      collection.find({"dp": "webclass_log"}).toArray((err, result) => {
-        console.log(result); // 確認用でコンソールに表示
-        console.log("timestamp: ", result[0].timestamp); // 確認用でコンソールに表示
-        res.send("test")
-      })
+      try {
+        let result = await collection.find().sort({date:1}).toArray()
+
+        console.log("succeeded: select")
+        collection_name = "filter_format" //filter_formatコレクションから整形方法を取得
+        collection = db.collection(collection_name);
+        
+        /* JSON形式のデータを受け取って処理する関数 */
+        /* => 処理したあとのデータ */
+        async function get_format(result_jsn){
+          try {
+
+            format_result = await collection.find({"category":result_jsn.data_category}).toArray()
+            //削除する「詳細」の項目を配列で取得
+            for(category of format_result[0].projection_category){
+              delete result_jsn.detail[category]
+            }
+            return result_jsn
+          }
+          catch(err) {
+            console.log("err: format select")
+            console.log(err)
+            client.close()
+          }
+        }
+
+        /* JSON形式のデータの配列を受け取って処理する関数 */
+        /* => 処理したあとのデータの配列 */
+        async function for_format(_result){
+          var output = [];
+          for(const result_jsn of _result){
+            var jsn = await get_format(result_jsn)
+            output.push(jsn);
+          }
+          return output;
+        }
+
+        processed_data = await for_format(result);
+        return processed_data;
+      }
+      catch(err) {
+        console.log("err: select")
+        console.log(err)
+        client.close()
+      }
     }
+    catch(err){
+      console.log(" !! failed to connect mongo db server !! ")
+      console.log(err)
+    }
+    finally{
+      client.close()
+    }
+  }
+  
+  var get_jsn = await connect_mongo();
+
+  let list = [];
+
+  list.push(["日時","内容","詳細","情報カテゴリ","このデータを参照しているサービス"])//項目名
+  for(i=0;i<get_jsn.length;i++){
+    var list_jsn = []
+    list_jsn.push(get_jsn[i].date)
+    list_jsn.push(get_jsn[i].message)
+    //詳細だけ個別の手順
+    var s1=get_jsn[i].detail
+    s1=JSON.stringify(s1)
+    const j1 = JSON.parse(s1)
+    const keyList = Object.keys(j1)
+    var list_jsn_list = []
+    for(j=0;j<keyList.length;j++){
+      list_jsn_list.push(keyList[j]+': '+j1[keyList[j]])
+    }
+    //console.log(list_jsn_list)
+    list_jsn.push(list_jsn_list)
+    list_jsn.push(get_jsn[i].data_category)
+    list_jsn.push(get_jsn[i].referring_service)
+    list.push(list_jsn)
+  }
+
+  res.render('data', {
+    title: 'data',
+    list: list
   });
 })
-
-
-function test_get() {
-  return new Promise(function (resolve, reject) {
-    MongoClient.connect(mongodb_db.url, mongodb_db.options, (err, client) => {
-      if( err != null || client == null ){
-        console.log(" !! failed to connect mongo db server !! ");
-        console.log(err);
-      }else{
-        console.log(" @@ Connected successfully to server @@ ");
-        const db = client.db(mongodb_db.db_name);
-        const collection = db.collection(mongodb_db.collection_name);
-
-        collection.find({"dp": "webclass_log"}).toArray((err, result) => {
-          // console.log(result); // 確認用でコンソールに表示
-          resolve(result);
-        })
-      }
-    }) 
-  })
-}
-
-// router.get('/test', (req, res) => {
-//   test_get()
-//     .then((result) => {
-//       console.log("timestamp: ", result[0].timestamp); // 確認用でコンソールに表示
-//       res.send("test")
-//     })
-// })
 
 
 module.exports = router;
