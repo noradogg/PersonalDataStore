@@ -1,10 +1,20 @@
 # Container
 
 mongodb: MongoDB server
+
 node: Web server
+
 insertdata: Connector
 
 # Usage
+
+データをPDSに追加する.  
+Database: persona_data  
+Collection: persona_data2
+
+データを利用者に表示させるためのフィルターを追加.  
+Database: persona_data  
+Collection: filter_format  
 
 ## docker-compose up
 
@@ -43,25 +53,25 @@ insertdata: Connector
 
 # URI
 
-expressのページ
+expressのページ  
 [http://localhost:3000/](http://localhost:3000/)
 
-新規登録
+新規登録  
 [http://localhost:3000/users/register](http://localhost:3000/users/register)
 
-ログイン
+ログイン  
 [http://localhost:3000/users/login](http://localhost:3000/users/login)
 
-ログアウト
+ログアウト  
 [http://localhost:3000/users/logout](http://localhost:3000/users/logout)
 
-マイページ
+マイページ  
 [http://localhost:3000/mypage](http://localhost:3000/mypage)
 
-ネットワークログ一覧(VPNで学内ネットワークに接続する.)
+ネットワークログ一覧(VPNで学内ネットワークに接続する.)  
 [http://localhost:3000/mypage/ocunet_log](http://localhost:3000/mypage/ocunet_log)
 
-testページ
+testページ  
 [http://localhost:3000/mypage/test](http://localhost:3000/mypage/test)
 
 
@@ -72,17 +82,12 @@ connection string: `mongodb://root:password@localhost:27017`
 # Abbreviations
 
 DP: Data provider (The source of personal data)
+
 SP: Service provider
+
 PDS: Personal Data Store
 
 # Memo
 
 ### insertdata
 - データソースがJSONファイルなので、実際に流れてくるデータを取得したい
-
-- マージしている最中
-- 手打ちでtest_insertをデータベースにいれるのを自動化する
-- データベースに入れたtest_insertからinsert_to_pds.pyでPDSに格納したい
-
-### node
-- PDSからデータを取ることはできている（コンソールで確認）ので、フロントエンドで表示したい
