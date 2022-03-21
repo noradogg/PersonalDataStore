@@ -35,9 +35,11 @@ var create_query = (student_number) => {
   };
 }
 
+var get_student_number = email => email.split('@')[0];
+
 /** メールアドレスから学籍番号を取得してそれをもとに検索 */
 async function search (email) {
-  var student_number = email.split('@')[0];
+  const student_number = get_student_number(email);
   const { body } = await client.search(create_query(student_number));
   // console.log(body.hits.hits);
   return body.hits.hits;
@@ -45,34 +47,41 @@ async function search (email) {
 
 /* GET /mypage/ocunet_log */
 router.get('/ocunet_log', (req, res) => {
-  if (req.user) {
-    search(req.user.email)
-      .catch(console.log)
-      .then(value => {
-        if (value) {
-          hits = value;
-        } else {
-          hits = ['該当するものはありません'];
-        }
-        res.render('list', {
-          title: 'ネットワークログ',
-          user: req.user,
-          hits: hits,
-        });
-      }); 
-      
-  } else {
+  if (!req.user) {
     res.redirect('/users/login');
   }
-})
+
+  search(req.user.email)
+    .catch(console.log)
+    .then(value => {
+      if (value) {
+        hits = value;
+      } else {
+        hits = ['該当するものはありません'];
+      }
+      res.render('list', {
+        title: 'ネットワークログ',
+        user: req.user,
+        hits: hits,
+      });
+    }); 
+  }
+)
 
 /* GET /mypage/data */
 router.get('/data', async (req,res)=>{
+  // ログインしていないとき、ログインページへリダイレクト
+  if (!req.user) {
+    res.redirect('/users/login');
+  }
+
+  const student_number = get_student_number(req.user.email);
 
   async function connect_mongo() {
     let processed_data;
     let client;
-    console.log("---- test connect mongodb server ---");
+
+    console.log("---- connect mongodb server ---");
 
     try {
       // ../config/mongodb_dbからurl, options, db_name, collection_nameをインポートしてるので、それを使う
@@ -82,9 +91,13 @@ router.get('/data', async (req,res)=>{
       var collection = db.collection(mongodb_db.collection_name);
 
       try {
-        let result = await collection.find().sort({date:1}).toArray()
+        let result = await collection
+          .find({ "pds_user_id": student_number })  // 学籍番号( pds_user_id )をもとに、検索する
+          .sort({ date:1 })
+          .toArray()
 
         console.log("succeeded: select")
+        console.log(result);
         collection_name = "filter_format" //filter_formatコレクションから整形方法を取得
         collection = db.collection(collection_name);
         
