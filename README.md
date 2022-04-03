@@ -30,8 +30,10 @@ Collection: filter_format
 
 ```:サーバの実行
 # npm install
-# node ./bin/www
+# startserver
 ```
+
+`startserver`は`node /src/mongo/bin/www`のエイリアス
 
 `npm install`は初回だけ。
 
