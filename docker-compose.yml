@@ -19,10 +19,13 @@ services:
   node:
     container_name: "node"
     hostname: "node"
-    image: node:17.3
+    # image: node:17.3
+    build: 
+      context: "./dockerfiles"
+      dockerfile: "node"
     tty: true
     restart: always
-    stop_grace_period: 5s
+    stop_grace_period: 3s
     ports:
       - 3000:3000
     volumes:
@@ -33,10 +36,12 @@ services:
     container_name: "insertdata"
     hostname: "insertdata"
     # image: python:3.10.2
-    build: "./insertdata_Dockerfile"
+    build:
+      context: "./insertdata_Dockerfile"
+      dockerfile: "insertdata"
     tty: true
     restart: always
-    stop_grace_period: 5s
+    stop_grace_period: 3s
     # ports:
     #   - 3000:3000
     volumes:
