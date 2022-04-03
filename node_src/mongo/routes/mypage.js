@@ -68,6 +68,77 @@ router.get('/ocunet_log', (req, res) => {
   }
 )
 
+async function get_data_from_mongo(user) {
+  let processed_data;
+  let client;
+  const student_number = get_student_number(user.email);
+
+
+  try {
+    // ../config/mongodb_dbからurl, options, db_name, collection_nameをインポートしてるので、それを使う
+    client = await MongoClient.connect(mongodb_db.url, mongodb_db.options);
+    console.log(" @@ Connected successfully to server @@ ")
+    const db = client.db(mongodb_db.db_name);
+    var collection = db.collection(mongodb_db.collection_name);
+
+    try {
+      let result = await collection
+        .find({ "pds_user_id": student_number })  // 学籍番号( pds_user_id )をもとに、検索する
+        .sort({ date:1 })
+        .toArray()
+
+      collection_name = "filter_format" //filter_formatコレクションから整形方法を取得
+      collection = db.collection(collection_name);
+      
+      /* JSON形式のデータを受け取って処理する関数 */
+      /* => 処理したあとのデータ */
+      async function get_format(result_jsn){
+        try {
+
+          format_result = await collection.find({"category":result_jsn.data_category}).toArray()
+          //削除する「詳細」の項目を配列で取得
+          for(category of format_result[0].projection_category){
+            delete result_jsn.detail[category]
+          }
+          return result_jsn
+        }
+        catch(err) {
+          console.log("err: format select")
+          console.log(err)
+          client.close()
+        }
+      }
+
+      /* JSON形式のデータの配列を受け取って処理する関数 */
+      /* => 処理したあとのデータの配列 */
+      async function for_format(_result){
+        var output = [];
+        for(const result_jsn of _result){
+          var jsn = await get_format(result_jsn)
+          output.push(jsn);
+        }
+        return output;
+      }
+
+      processed_data = await for_format(result);
+      return processed_data;
+    }
+    catch(err) {
+      console.log("err: select")
+      console.log(err)
+      client.close()
+    }
+  }
+  catch(err){
+    console.log(" !! failed to connect mongo db server !! ")
+    console.log(err)
+  }
+  finally{
+    client.close()
+  }
+}
+ 
+
 /* GET /mypage/data */
 router.get('/data', async (req,res)=>{
   // ログインしていないとき、ログインページへリダイレクト
@@ -75,81 +146,7 @@ router.get('/data', async (req,res)=>{
     res.redirect('/users/login');
   }
 
-  const student_number = get_student_number(req.user.email);
-
-  async function connect_mongo() {
-    let processed_data;
-    let client;
-
-    console.log("---- connect mongodb server ---");
-
-    try {
-      // ../config/mongodb_dbからurl, options, db_name, collection_nameをインポートしてるので、それを使う
-      client = await MongoClient.connect(mongodb_db.url, mongodb_db.options);
-      console.log(" @@ Connected successfully to server @@ ")
-      const db = client.db(mongodb_db.db_name);
-      var collection = db.collection(mongodb_db.collection_name);
-
-      try {
-        let result = await collection
-          .find({ "pds_user_id": student_number })  // 学籍番号( pds_user_id )をもとに、検索する
-          .sort({ date:1 })
-          .toArray()
-
-        console.log("succeeded: select")
-        console.log(result);
-        collection_name = "filter_format" //filter_formatコレクションから整形方法を取得
-        collection = db.collection(collection_name);
-        
-        /* JSON形式のデータを受け取って処理する関数 */
-        /* => 処理したあとのデータ */
-        async function get_format(result_jsn){
-          try {
-
-            format_result = await collection.find({"category":result_jsn.data_category}).toArray()
-            //削除する「詳細」の項目を配列で取得
-            for(category of format_result[0].projection_category){
-              delete result_jsn.detail[category]
-            }
-            return result_jsn
-          }
-          catch(err) {
-            console.log("err: format select")
-            console.log(err)
-            client.close()
-          }
-        }
-
-        /* JSON形式のデータの配列を受け取って処理する関数 */
-        /* => 処理したあとのデータの配列 */
-        async function for_format(_result){
-          var output = [];
-          for(const result_jsn of _result){
-            var jsn = await get_format(result_jsn)
-            output.push(jsn);
-          }
-          return output;
-        }
-
-        processed_data = await for_format(result);
-        return processed_data;
-      }
-      catch(err) {
-        console.log("err: select")
-        console.log(err)
-        client.close()
-      }
-    }
-    catch(err){
-      console.log(" !! failed to connect mongo db server !! ")
-      console.log(err)
-    }
-    finally{
-      client.close()
-    }
-  }
-  
-  var get_jsn = await connect_mongo();
+  var get_jsn = await get_data_from_mongo(req.user);
 
   let list = [];
 
@@ -167,7 +164,6 @@ router.get('/data', async (req,res)=>{
     for(j=0;j<keyList.length;j++){
       list_jsn_list.push(keyList[j]+': '+j1[keyList[j]])
     }
-    //console.log(list_jsn_list)
     list_jsn.push(list_jsn_list)
     list_jsn.push(get_jsn[i].data_category)
     list_jsn.push(get_jsn[i].referring_service)
